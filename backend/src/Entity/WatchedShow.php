@@ -33,6 +33,7 @@ class WatchedShow
 
     public function __construct()
     {
+        $this->addedAt = new \DateTimeImmutable();
         $this->watchedEpisodes = new ArrayCollection();
     }
 

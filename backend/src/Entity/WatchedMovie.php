@@ -26,6 +26,11 @@ class WatchedMovie
     #[ORM\Column]
     private ?int $movieId = null;
 
+    public function __construct()
+    {
+        $this->addedAt = new \DateTimeImmutable();
+    }
+
     // Getters and setters...
 
     public function getId(): ?int

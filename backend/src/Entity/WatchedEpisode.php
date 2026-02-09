@@ -23,6 +23,11 @@ class WatchedEpisode
     #[ORM\JoinColumn(nullable: false)]
     private ?WatchedShow $watchedShow = null;
 
+    public function __construct()
+    {
+        $this->watchedAt = new \DateTimeImmutable();
+    }
+
     // Getters and setters...
 
     public function getId(): ?int
