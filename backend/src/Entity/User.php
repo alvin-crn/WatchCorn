@@ -36,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $restricted = false;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profilPic = null;
+    private ?string $profilePic = null;
 
     /**
      * @var Collection<int, WatchedShow>
@@ -142,14 +142,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getProfilPic(): ?string
+    public function getProfilePic(): ?string
     {
-        return $this->profilPic;
+        return $this->profilePic;
     }
 
-    public function setProfilPic(?string $profilPic): static
+    public function setProfilePic(?string $profilePic): static
     {
-        $this->profilPic = $profilPic;
+        $this->profilePic = $profilePic;
 
         return $this;
     }
