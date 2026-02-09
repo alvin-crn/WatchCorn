@@ -23,9 +23,13 @@ class WatchedEpisode
     #[ORM\JoinColumn(nullable: false)]
     private ?WatchedShow $watchedShow = null;
 
+    #[ORM\Column]
+    private ?int $watchCount = null;
+
     public function __construct()
     {
         $this->watchedAt = new \DateTimeImmutable();
+        $this->watchCount = 1;
     }
 
     // Getters and setters...
@@ -67,6 +71,18 @@ class WatchedEpisode
     public function setWatchedShow(?WatchedShow $watchedShow): static
     {
         $this->watchedShow = $watchedShow;
+
+        return $this;
+    }
+
+    public function getWatchCount(): ?int
+    {
+        return $this->watchCount;
+    }
+
+    public function setWatchCount(int $watchCount): static
+    {
+        $this->watchCount = $watchCount;
 
         return $this;
     }

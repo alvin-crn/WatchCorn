@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\WatchedMovieRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\WatchedMovieRepository;
 
 #[ORM\Entity(repositoryClass: WatchedMovieRepository::class)]
 class WatchedMovie
@@ -13,7 +13,7 @@ class WatchedMovie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'watchedMovies')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'watchedMovies')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $User = null;
 
@@ -25,6 +25,9 @@ class WatchedMovie
 
     #[ORM\Column]
     private ?int $movieId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $watchCount = null;
 
     public function __construct()
     {
@@ -82,6 +85,18 @@ class WatchedMovie
     public function setMovieId(int $movieId): static
     {
         $this->movieId = $movieId;
+
+        return $this;
+    }
+
+    public function getWatchCount(): ?int
+    {
+        return $this->watchCount;
+    }
+
+    public function setWatchCount(int $watchCount): static
+    {
+        $this->watchCount = $watchCount;
 
         return $this;
     }
