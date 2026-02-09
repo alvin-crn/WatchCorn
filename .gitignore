@@ -1,6 +1,5 @@
 .DS_Store
 
-
 ###> symfony/framework-bundle ###
 backend/.env.local
 backend/.env.local.php
@@ -11,3 +10,7 @@ backend/public/bundles/
 backend/var/
 backend/vendor/
 ###< symfony/framework-bundle ###
+
+###> lexik/jwt-authentication-bundle ###
+backend/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
