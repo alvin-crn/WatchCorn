@@ -30,8 +30,15 @@ security:
             jwt: ~
 
     access_control:
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        # Auth
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+
+        # Recherche & contenu public
+        - { path: ^/api/user/[^/]+$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/search, roles: PUBLIC_ACCESS }
+
+        # Tout le reste de l’API → JWT requis
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
