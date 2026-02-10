@@ -7,6 +7,8 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    tmdb.api_key: '%env(TMDB_API_KEY)%'
+    tmdb.bearer_token: '%env(TMDB_BEARER_TOKEN)%'
 
 services:
     # default configuration for services in *this* file
@@ -21,3 +23,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Service\TmdbService:
+        arguments:
+            $tmdbApiKey: '%tmdb.api_key%'
+            $tmdbBearerToken: '%tmdb.bearer_token%'
