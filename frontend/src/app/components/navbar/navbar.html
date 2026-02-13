@@ -1,0 +1,16 @@
+<nav class="navbar">
+    <div class="links">
+        <div class="logo" routerLink="/">
+            <img src="img/watchcorn-logo.png" alt="WatchCorn Logo" class="logo-img" />
+            WatchCorn
+        </div>
+        <form class="search-form" (ngSubmit)="onSearch()" #searchForm="ngForm">
+            <input type="text" name="searchQuery" [(ngModel)]="searchQuery"
+                placeholder="Rechercher un film, série ou acteur..." required />
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+        <a routerLink="/">Films</a>
+        <a routerLink="/">Séries</a>
+        <a routerLink="/login">Connexion</a>
+    </div>
+</nav>
