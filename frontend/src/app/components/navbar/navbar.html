@@ -11,6 +11,10 @@
         </form>
         <a routerLink="/">Films</a>
         <a routerLink="/">Séries</a>
-        <a routerLink="/login">Connexion</a>
+        <!-- Si pas connecté -->
+        <a *ngIf="!(isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
+        <!-- Si connecté -->
+        <a *ngIf="isLoggedIn$ | async" routerLink="/">Mon profil</a>
+        <a *ngIf="isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
     </div>
 </nav>

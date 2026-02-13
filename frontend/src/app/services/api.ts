@@ -13,6 +13,14 @@ export class ApiService {
     
     constructor(private http: HttpClient) { }
 
+    // Méthode pour se connecter
+    login(username: string, password: string) {
+        return this.http.post(`${this.baseUrl}/login_check`, {
+            username,
+            password
+        });
+    }
+
     // Méthode pour rechercher des films
     search(query: string): Observable<any> {
         return this.http.get(`${this.baseUrl}/tmdb/search`, {
