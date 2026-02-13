@@ -20,6 +20,10 @@ export class NavbarComponent {
     return this.authService.isLoggedIn$;
   }
 
+  get currentUser$() {
+    return this.authService.currentUser$;
+  }
+
   onSearch() {
     if (!this.searchQuery.trim()) return;
 

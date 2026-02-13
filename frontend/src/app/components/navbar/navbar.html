@@ -14,7 +14,12 @@
         <!-- Si pas connecté -->
         <a *ngIf="!(isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
         <!-- Si connecté -->
-        <a *ngIf="isLoggedIn$ | async" routerLink="/">Mon profil</a>
+        <div *ngIf="currentUser$ | async as user" class="user-info">
+            <a routerLink="/">
+                <img [src]="'img/' + user.profilePic" alt="Avatar" class="avatar" />
+                <span>{{ user.username }}</span>
+            </a>
+        </div>
         <a *ngIf="isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
     </div>
 </nav>

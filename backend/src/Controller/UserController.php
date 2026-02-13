@@ -9,10 +9,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/api')]
 final class UserController extends AbstractController
 {
-    #[Route('/api/me', methods: ['GET'])]
-    public function me(UserPresenter $presenter): JsonResponse
+    #[Route('/me', name: 'api_me', methods: ['GET'])]
+    public function me(): JsonResponse
     {
         $user = $this->getUser();
 
@@ -20,10 +21,17 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'User not found'], 404);
         }
 
-        return new JsonResponse($presenter->presentMe($user));
+        return new JsonResponse([
+            'username' => $user->getUsername(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+            'createdAt' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
+            'restricted' => $user->isRestricted(),
+            'profilePic' => $user->getProfilePic(),
+        ]);
     }
 
-    #[Route('/api/user/{username}', name: 'app_user', methods: ['GET'])]
+    #[Route('/user/{username}', name: 'api_user', methods: ['GET'])]
     public function getUserProfile(string $username, EntityManagerInterface $em, UserPresenter $presenter): JsonResponse
     {
         $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
