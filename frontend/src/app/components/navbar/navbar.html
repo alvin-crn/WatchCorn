@@ -12,14 +12,14 @@
         <a routerLink="/">Films</a>
         <a routerLink="/">Séries</a>
         <!-- Si pas connecté -->
-        <a *ngIf="!(isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
+        <a *ngIf="!(authService.isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
         <!-- Si connecté -->
-        <div *ngIf="currentUser$ | async as user" class="user-info">
+        <div *ngIf="authService.currentUser$ | async as user" class="user-info">
             <a routerLink="/">
                 <img [src]="'img/' + user.profilePic" alt="Avatar" class="avatar" />
                 <span>{{ user.username }}</span>
             </a>
         </div>
-        <a *ngIf="isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
+        <a *ngIf="authService.isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
     </div>
 </nav>

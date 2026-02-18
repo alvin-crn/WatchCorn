@@ -14,15 +14,7 @@ import { AuthService } from '../../services/auth';
 export class NavbarComponent {
   searchQuery: string = '';
 
-  constructor(private router: Router, private authService: AuthService) { }
-
-  get isLoggedIn$() {
-    return this.authService.isLoggedIn$;
-  }
-
-  get currentUser$() {
-    return this.authService.currentUser$;
-  }
+  constructor(private router: Router, public authService: AuthService) { }
 
   onSearch() {
     if (!this.searchQuery.trim()) return;
