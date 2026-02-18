@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../services/api';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-search',
@@ -17,7 +18,8 @@ export class Search implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private api: ApiService
+    private api: ApiService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -37,10 +39,12 @@ export class Search implements OnInit {
       next: (data) => {
         this.results = data.results;
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }

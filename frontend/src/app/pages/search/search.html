@@ -1,7 +1,13 @@
-<div *ngIf="loading">Chargement...</div>
+<div *ngIf="loading">
+  Chargement...
+</div>
 
-<div *ngIf="!loading">
+<div *ngIf="!loading && results.length > 0">
   <div *ngFor="let item of results">
     <p>{{ item.title || item.name }}</p>
   </div>
+</div>
+
+<div *ngIf="!loading && results.length === 0">
+  Aucun résultat trouvé.
 </div>
