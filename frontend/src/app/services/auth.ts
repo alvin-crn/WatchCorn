@@ -35,6 +35,7 @@ export class AuthService {
     );
   }
 
+  // User info (lite)
   loadUser() {
     return this.http.get(`${this.baseUrl}/me`).subscribe({
       next: (user) => this.currentUserSubject.next(user),
