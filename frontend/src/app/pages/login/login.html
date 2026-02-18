@@ -1,13 +1,27 @@
 <div class="login-container">
-  <form (ngSubmit)="onLogin()">
-    <input type="text" name="username" [(ngModel)]="username" placeholder="Nom d'utilisateur" required />
+  <div class="login-card">
+    <h2>Connexion</h2>
 
-    <input type="password" name="password" [(ngModel)]="password" placeholder="Mot de passe" required />
+    <p *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </p>
 
-    <button type="submit">Connexion</button>
-  </form>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-group">
+        <input type="text" name="username" [(ngModel)]="username" required placeholder="Nom d'utilisateur">
+      </div>
 
-  <p *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
-  </p>
+      <div class="form-group">
+        <input type="password" name="password" [(ngModel)]="password" required placeholder="Mot de passe">
+      </div>
+
+      <button type="submit" class="btn-login">
+        Se connecter
+      </button>
+    </form>
+
+    <p class="register-link">
+      Pas encore inscrit ? <a routerLink="/">Créer un compte</a>
+    </p>
+  </div>
 </div>
