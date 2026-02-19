@@ -3,9 +3,41 @@
 namespace App\Service;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserPresenter
+class UserService
 {
+    public function __construct(
+        private EntityManagerInterface $em,
+        private UserPasswordHasherInterface $passwordHasher
+    ) {}
+
+    public function createUser(string $username, string $email, string $plainPassword): User
+    {
+        $user = new User();
+        $user->setUsername($username);
+        $user->setDisplayName($username);
+        $user->setEmail($email);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
+        $user->setPassword($hashedPassword);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
+
+    public function usernameExists(string $username): bool
+    {
+        return (bool) $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
+    }
+
+    public function emailExists(string $email): bool
+    {
+        return (bool) $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
+    }
+
     public function presentMe(User $user): array
     {
         $watchedShows = [];
