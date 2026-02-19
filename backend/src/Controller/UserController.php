@@ -2,16 +2,61 @@
 
 namespace App\Controller;
 
+use App\Entity\EmailVerification;
 use App\Entity\User;
+use App\Service\EmailVerificationService;
+use App\Service\MailService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api', name: 'api_')]
 final class UserController extends AbstractController
 {
+    #[Route('/register', name: 'register', methods: ['POST'])]
+    public function register(
+        Request $request,
+        EmailVerificationService $emailVerificationService,
+        MailService $mailService,
+        UserService $userService
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+
+        $username = $data['username'] ?? null;
+        $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
+
+        if (!$username || !$email || !$password) {
+            return new JsonResponse(['message' => 'Missing fields'], 400);
+        }
+
+        if ($userService->usernameExists($username)) {
+            return new JsonResponse(['message' => 'Username already taken'], 400);
+        }
+
+        if ($userService->emailExists($email)) {
+            return new JsonResponse(['message' => 'Email already taken'], 400);
+        }
+
+        $user = $userService->createUser($username, $email, $password);
+
+        $token = $emailVerificationService->generateUrlVerification($user);
+
+        // Envoyer un email de confirmation d'inscription
+        $content = "
+        <h1>Bienvenue sur WatchCorn🍿</h1> 
+        Nous vous remercions pour votre inscription, <strong>" . $username . "</strong> !</br></br>
+        Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/actived-account?token=" . $token . "'>Confirmer mon email</a> </br></br>
+        Ce lien expire dans 30 minutes.
+        ";
+        $mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
+
+        return new JsonResponse(['message' => 'User created successfully'], 201);
+    }
+
     #[Route('/me', name: 'me', methods: ['GET'])]
     public function me(): JsonResponse
     {

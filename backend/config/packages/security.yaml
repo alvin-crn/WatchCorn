@@ -30,12 +30,12 @@ security:
             jwt: ~
 
     access_control:
-        # Auth
+        # Auth & inscription → accès public
         - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
 
         # Recherche & contenu public
         - { path: ^/api/user/[^/]+$, roles: PUBLIC_ACCESS }
-        - { path: ^/api/search, roles: PUBLIC_ACCESS }
         - { path: ^/api/tmdb, roles: PUBLIC_ACCESS }
 
         # Tout le reste de l’API → JWT requis
