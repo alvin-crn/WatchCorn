@@ -32,8 +32,6 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/{username}', name: 'api_user', methods: ['GET'])]
-    public function getUserProfile(string $username, EntityManagerInterface $em, UserPresenter $presenter): JsonResponse
     #[Route('/user/{username}', name: 'user_profile', methods: ['GET'])]
     public function getUserProfile(string $username, EntityManagerInterface $em, UserService $userService): JsonResponse
     {
@@ -43,7 +41,6 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'User not found'], 404);
         }
 
-        return new JsonResponse($presenter->presentPublic($user));
         return new JsonResponse($userService->presentPublic($user));
     }
     }
