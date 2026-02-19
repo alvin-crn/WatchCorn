@@ -13,11 +13,12 @@
         <a routerLink="/">Séries</a>
         <!-- Si pas connecté -->
         <a *ngIf="!(authService.isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
+        <a *ngIf="!(authService.isLoggedIn$ | async)" routerLink="/inscription">Inscription</a>
         <!-- Si connecté -->
         <div *ngIf="authService.currentUser$ | async as user" class="user-info">
             <a routerLink="/">
                 <img [src]="'img/' + user.profilePic" alt="Avatar" class="avatar" />
-                <span>{{ user.username }}</span>
+                <span>{{ user.displayName }}</span>
             </a>
         </div>
         <a *ngIf="authService.isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
