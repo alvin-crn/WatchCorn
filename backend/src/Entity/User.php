@@ -23,6 +23,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 30, unique: true)]
     private ?string $username = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $displayName = null;
+
     #[ORM\Column]
     private array $roles = [];
 
@@ -34,6 +37,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $restricted = false;
+
+    #[ORM\Column]
+    private ?bool $actived = false;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePic = null;
@@ -92,6 +98,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->username;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
+    public function setDisplayName(string $displayName): static
+    {
+        $this->displayName = $displayName;
+
+        return $this;
     }
 
     public function getRoles(): array
@@ -214,6 +232,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $watchedMovie->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isActived(): ?bool
+    {
+        return $this->actived;
+    }
+
+    public function setActived(bool $actived): static
+    {
+        $this->actived = $actived;
 
         return $this;
     }
