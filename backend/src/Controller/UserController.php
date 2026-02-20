@@ -33,13 +33,14 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'Champs manquants'], 400);
         }
 
-        if ($userService->usernameExists($username)) {
-            return new JsonResponse(['message' => 'Nom d\'utilisateur déjà pris'], 400);
-        }
+        $usernameError = $userService->usernameValidator($username);
+        if ($usernameError) return new JsonResponse(['message' => $usernameError], 400);
 
-        if ($userService->emailExists($email)) {
-            return new JsonResponse(['message' => 'Email déjà utilisé'], 400);
-        }
+        $emailError = $userService->emailValidator($email);
+        if ($emailError) return new JsonResponse(['message' => $emailError], 400);
+
+        $passwordError = $userService->passwordValidator($password);
+        if ($passwordError) return new JsonResponse(['message' => $passwordError], 400);
 
         $user = $userService->createUser($username, $email, $password);
 

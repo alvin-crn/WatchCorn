@@ -4,19 +4,51 @@
 
     <p class="feedback error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <!-- Username -->
       <div class="form-group">
-        <input type="text" name="username" [(ngModel)]="username" required placeholder="Nom d'utilisateur">
-      </div>
-      <div class="form-group">
-        <input type="email" name="email" [(ngModel)]="email" required placeholder="Email">
-      </div>
-      <div class="form-group">
-        <input type="password" name="password" [(ngModel)]="password" required placeholder="Mot de passe">
+        <input type="text" formControlName="username" placeholder="Nom d'utilisateur">
+        <div class="error" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+          <span *ngIf="registerForm.get('username')?.errors?.['required']">Le nom est requis.</span>
+          <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Minimum 3 caractères.</span>
+          <span *ngIf="registerForm.get('username')?.errors?.['maxlength']">Maximum 20 caractères.</span>
+          <span *ngIf="registerForm.get('username')?.errors?.['pattern']">
+            Caractères invalides (lettres, chiffres, underscore et tiret autorisés).
+          </span>
+        </div>
       </div>
 
-      <button type="submit" class="btn-register">S'inscrire</button>
+      <!-- Email -->
+      <div class="form-group">
+        <input type="email" formControlName="email" placeholder="Email">
+        <div class="error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+          <span *ngIf="registerForm.get('email')?.errors?.['required']">Email requis.</span>
+          <span *ngIf="registerForm.get('email')?.errors?.['pattern']">Email invalide (ex: user@exemple.com).</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <input type="password" formControlName="password" placeholder="Mot de passe">
+        <div class="error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">Mot de passe requis.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimum 12 caractères.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['maxlength']">Maximum 128 caractères.</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['pattern']">
+            Doit contenir au moins :<br>
+            • 1 lettre minuscule<br>
+            • 1 lettre majuscule<br>
+            • 1 chiffre<br>
+            • 1 symbole parmi : ! @ # $ % ^ & * ( ) _ - + =<br>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-register" [disabled]="registerForm.invalid">
+        S'inscrire
+      </button>
     </form>
+
     <p class="login-link">Déjà inscrit ? <a routerLink="/login">Se connecter</a></p>
   </div>
 </div>

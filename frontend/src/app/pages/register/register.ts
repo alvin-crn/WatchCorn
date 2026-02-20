@@ -5,32 +5,60 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
+
 export class Register {
 
-  username = '';
-  email = '';
-  password = '';
+  registerForm: FormGroup;
   errorMessage = '';
-  successMessage = '';
 
-  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder) {
+    // Initialisation du formulaire avec validation
+    this.registerForm = this.fb.group({
+      username: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+        Validators.pattern('^[a-zA-Z0-9_-]+$')
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+      ]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(12),
+        Validators.maxLength(128),
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_\\-+=]).+$')
+      ]]
+    });
+  }
 
   onRegister() {
+    // Vérifie que le formulaire est valide avant tout envoi
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
+
     this.errorMessage = '';
-    this.successMessage = '';
 
     this.http.post(`${environment.apiUrl}/register`, {
-      username: this.username,
-      email: this.email,
-      password: this.password
+      username: this.registerForm.get('username')?.value,
+      email: this.registerForm.get('email')?.value,
+      password: this.registerForm.get('password')?.value
     }).subscribe({
       next: () => {
         this.router.navigate(['/inscription-reussie']);

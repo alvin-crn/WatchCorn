@@ -12,22 +12,37 @@
     background: vars.$secondary-background;
     border-radius: 16px;
     color: vars.$text-color;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
     text-align: center;
 
-    h2 { margin-bottom: 30px; }
+    h2 {
+      margin-bottom: 30px;
+    }
 
-    .form-group { margin-bottom: 20px; }
+    .form-group {
+      margin-bottom: 20px;
 
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      background: #222;
-      color: vars.$text-color;
-      outline: none;
-      &:focus { box-shadow: 0 0 0 2px vars.$primary-color; }
+      input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: #222;
+        color: vars.$text-color;
+        outline: none;
+
+        &:focus {
+          box-shadow: 0 0 0 2px vars.$primary-color;
+        }
+      }
+
+      .error {
+        text-align: left;
+        margin-top: 8px;
+        font-size: 12px;
+        color: vars.$error-color;
+      }
+
     }
 
     .btn-register {
@@ -39,14 +54,38 @@
       color: vars.$text-color;
       font-weight: 600;
       cursor: pointer;
-      &:hover { background: vars.$primary-color-hover; transform: translateY(-2px); }
+      transition: all 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background: vars.$primary-color-hover;
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        background: #555;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+      }
     }
 
-    .feedback { margin-bottom: 16px; font-size: 14px; }
-    .feedback.error { color: vars.$error-color; }
+    .feedback {
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
 
-    .login-link { margin-top: 20px; font-size: 14px;
-      a { color: vars.$primary-color; text-decoration: none; }
+    .feedback.error {
+      color: vars.$error-color;
+    }
+
+    .login-link {
+      margin-top: 20px;
+      font-size: 14px;
+
+      a {
+        color: vars.$primary-color;
+        text-decoration: none;
+      }
     }
   }
 }
