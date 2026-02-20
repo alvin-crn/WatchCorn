@@ -30,15 +30,15 @@ final class UserController extends AbstractController
         $password = $data['password'] ?? null;
 
         if (!$username || !$email || !$password) {
-            return new JsonResponse(['message' => 'Missing fields'], 400);
+            return new JsonResponse(['message' => 'Champs manquants'], 400);
         }
 
         if ($userService->usernameExists($username)) {
-            return new JsonResponse(['message' => 'Username already taken'], 400);
+            return new JsonResponse(['message' => 'Nom d\'utilisateur déjà pris'], 400);
         }
 
         if ($userService->emailExists($email)) {
-            return new JsonResponse(['message' => 'Email already taken'], 400);
+            return new JsonResponse(['message' => 'Email déjà utilisé'], 400);
         }
 
         $user = $userService->createUser($username, $email, $password);
