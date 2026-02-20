@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -20,7 +21,7 @@ export class Register {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private cdr: ChangeDetectorRef) { }
 
   onRegister() {
     this.errorMessage = '';
@@ -32,11 +33,11 @@ export class Register {
       password: this.password
     }).subscribe({
       next: () => {
-        this.successMessage = "Inscription réussie ! Vous pouvez maintenant vous connecter.";
-        this.router.navigate(['/connexion']);
+        this.router.navigate(['/inscription-reussie']);
       },
       error: (err) => {
         this.errorMessage = err.error.message || "Une erreur est survenue";
+        this.cdr.detectChanges();
       }
     });
   }
