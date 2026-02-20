@@ -88,5 +88,32 @@ final class UserController extends AbstractController
 
         return new JsonResponse($userService->presentPublic($user));
     }
+
+    #[Route('/verify-email', name: 'verify_email', methods: ['GET'])]
+    public function verifyEmail(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $tokenValue = $request->query->get('token');
+
+        if (!$tokenValue) {
+            return new JsonResponse(['message' => 'Ce lien est invalide.'], 400);
+        }
+
+        $token = $em->getRepository(EmailVerification::class)->findOneBy(['token' => $tokenValue]);
+
+        if (!$token) {
+            return new JsonResponse(['message' => 'Ce lien est invalide.'], 400);
+        }
+
+        if ($token->getExpiresAt() < new \DateTimeImmutable()) {
+            return new JsonResponse(['message' => 'Ce lien a expiré.'], 400);
+        }
+
+        $user = $token->getUser();
+        $user->setActived(true);
+
+        $em->remove($token);
+        $em->flush();
+
+        return new JsonResponse(['message' => 'Compte activé.']);
     }
 }
