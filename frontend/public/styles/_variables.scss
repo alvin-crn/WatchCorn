@@ -1,3 +1,19 @@
-// variables globales
+// Variables globales
+
+// Tailles
 $h-navbar: 60px;
 $display-screen: calc(100vh - #{$h-navbar});
+
+// Couleurs
+$background-color: #0f0f0f;
+$navbar-background: #121212;
+$secondary-background: #1a1a1a;
+$text-color: #f5f5f5;
+
+$primary-color: #ff3c00;
+$primary-color-hover: #ff5a2c;
+$secondary-color: #f5c518;
+$secondary-color-hover: #e0b800;
+
+$error-color: #ff5555;
+$success-color: #55ff55;

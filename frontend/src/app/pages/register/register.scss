@@ -1,5 +1,7 @@
+@use '_variables.scss' as vars;
+
 .register-container {
-  height: 100vh;
+  height: vars.$display-screen;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,9 +9,9 @@
   .register-card {
     width: 380px;
     padding: 40px;
-    background: #141414;
+    background: vars.$secondary-background;
     border-radius: 16px;
-    color: white;
+    color: vars.$text-color;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
     text-align: center;
 
@@ -23,9 +25,9 @@
       border-radius: 8px;
       border: none;
       background: #222;
-      color: white;
+      color: vars.$text-color;
       outline: none;
-      &:focus { box-shadow: 0 0 0 2px #ff3c00; }
+      &:focus { box-shadow: 0 0 0 2px vars.$primary-color; }
     }
 
     .btn-register {
@@ -33,19 +35,18 @@
       padding: 12px;
       border-radius: 8px;
       border: none;
-      background: #ff3c00;
-      color: white;
+      background: vars.$primary-color;
+      color: vars.$text-color;
       font-weight: 600;
       cursor: pointer;
-      &:hover { background: #ff5a2c; transform: translateY(-2px); }
+      &:hover { background: vars.$primary-color-hover; transform: translateY(-2px); }
     }
 
-    .feedback { margin-top: 12px; font-size: 14px; }
-    .feedback.error { color: #ff5555; }
-    .feedback.success { color: #55ff55; }
+    .feedback { margin-bottom: 16px; font-size: 14px; }
+    .feedback.error { color: vars.$error-color; }
 
     .login-link { margin-top: 20px; font-size: 14px;
-      a { color: #ff3c00; text-decoration: none; }
+      a { color: vars.$primary-color; text-decoration: none; }
     }
   }
 }
