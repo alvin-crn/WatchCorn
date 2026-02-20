@@ -3,6 +3,7 @@ import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Search } from './pages/search/search';
+import { SuccesRegister } from './pages/succes-register/succes-register';
 
 
 export const routes: Routes = [
@@ -10,6 +11,7 @@ export const routes: Routes = [
   { path: 'connexion', component: Login },
   { path: 'inscription', component: Register },
   { path: 'recherche', component: Search },
+  { path: 'inscription-reussie', component: SuccesRegister },
 ];
 
 export const appRouter = provideRouter(routes);
