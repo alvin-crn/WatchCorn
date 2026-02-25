@@ -17,7 +17,8 @@
 
         <div class="btn-container">
             <button class="resend-btn secondary" (click)="resendVerification()" [disabled]="loading">
-                {{ loading ? 'Envoi en cours...' : 'Renvoyer le lien de confirmation' }}
+                <app-loader-1 *ngIf="loading"></app-loader-1>
+                <span *ngIf="!loading">Renvoyer le lien de confirmation</span>
             </button>
 
             <button class="back-btn primary" routerLink="/connexion">

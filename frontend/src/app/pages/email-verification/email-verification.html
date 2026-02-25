@@ -1,15 +1,15 @@
 <div class="email-verification-container">
-  <div class="card">
-    <p *ngIf="isLoading">Chargement...</p>
+  <app-loader-1 *ngIf="isLoading"></app-loader-1>
 
-    <ng-container *ngIf="!isLoading">
+  <div class="card" *ngIf="!isLoading">
+    <ng-container>
       <ng-container *ngIf="!isSuccess">
         <p>{{ message }}</p>
       </ng-container>
 
       <ng-container *ngIf="isSuccess">
-        <p>Votre compte a été activé avec succès ! 🎉</p>
-        <p>Vous pouvez maintenant vous connecter.</p>
+        <p class="success">Votre compte a été activé avec succès ! 🎉</p>
+        <p class="success">Vous pouvez maintenant vous connecter.</p>
         <button routerLink="/connexion">Aller à la connexion</button>
       </ng-container>
     </ng-container>

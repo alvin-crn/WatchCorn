@@ -4,11 +4,12 @@ import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+import { Loader1 } from '../../shared/loader-1/loader-1';
 
 @Component({
   selector: 'app-unactived-account',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, Loader1],
   templateUrl: './unactived-account.html',
   styleUrls: ['./unactived-account.scss'],
 })

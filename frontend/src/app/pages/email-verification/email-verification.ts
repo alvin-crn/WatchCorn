@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef } from '@angular/core';
+import { Loader1 } from '../../shared/loader-1/loader-1';
 
 @Component({
   selector: 'app-email-verification',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, Loader1],
   templateUrl: './email-verification.html',
   styleUrls: ['./email-verification.scss'],
 })
@@ -42,7 +43,6 @@ export class EmailVerification implements OnInit {
           this.cdr.detectChanges();
         },
         error: (e: any) => {
-          console.log('Erreur backend:', e);
           this.message = e.error?.message || "Lien invalide ou expiré.";
           this.isLoading = false;
           this.cdr.detectChanges();
