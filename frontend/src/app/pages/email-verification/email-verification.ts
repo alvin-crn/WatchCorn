@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
@@ -7,7 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-email-verification',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './email-verification.html',
   styleUrls: ['./email-verification.scss'],
 })
