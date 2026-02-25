@@ -135,6 +135,10 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'Utilisateur inexistant'], 404);
         }
 
+        if ($user->isActived()) {
+            return new JsonResponse(['message' => 'Ce compte est déjà activé.'], 400);
+        }
+
         // Supprimer les anciens tokens de vérification pour cet utilisateur
         $existingTokens = $em->getRepository(EmailVerification::class)->findBy(['User' => $user]);
         if ($existingTokens) {
