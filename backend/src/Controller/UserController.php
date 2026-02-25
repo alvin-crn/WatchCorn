@@ -50,7 +50,7 @@ final class UserController extends AbstractController
         $content = "
         <h1>Bienvenue sur WatchCorn🍿</h1> 
         Nous vous remercions pour votre inscription, <strong>" . $username . "</strong> !</br></br>
-        Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/actived-account?token=" . $token . "'>Confirmer mon email</a> </br></br>
+        Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/compte-active?token=" . $token . "'>Confirmer mon email</a> </br></br>
         Ce lien expire dans 30 minutes.
         ";
         $mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
@@ -116,5 +116,43 @@ final class UserController extends AbstractController
         $em->flush();
 
         return new JsonResponse(['message' => 'Compte activé.']);
+    }
+
+    #[Route('/send-email-verification', name: 'send_email_verification', methods: ['POST'])]
+    public function sendEmailVerification(Request $request, EntityManagerInterface $em, EmailVerificationService $emailVerificationService, MailService $mailService): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $username = $data['username'] ?? null;
+
+        if (!$username) {
+            return new JsonResponse(['message' => 'Aucun utilisateur à qui envoyer l\'email de vérification'], 400);
+        }
+
+        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'Utilisateur inexistant'], 404);
+        }
+
+        // Supprimer les anciens tokens de vérification pour cet utilisateur
+        $existingTokens = $em->getRepository(EmailVerification::class)->findBy(['User' => $user]);
+        if ($existingTokens) {
+            foreach ($existingTokens as $existingToken) {
+                $em->remove($existingToken);
+            }
+            $em->flush();
+        }
+
+        $token = $emailVerificationService->generateUrlVerification($user);
+
+        $content = "
+        <h1>Je verifie mon email 📧</h1> 
+        Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/compte-active?token=" . $token . "'>Confirmer mon email</a> </br></br>
+        Ce lien expire dans 30 minutes.
+        ";
+        $mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
+
+        return new JsonResponse(['message' => 'Email de vérification envoyé à ' . $user->getEmail()], 201);
     }
 }

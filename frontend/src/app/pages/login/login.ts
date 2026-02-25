@@ -25,6 +25,13 @@ export class Login {
     onLogin() {
         this.authService.login(this.username, this.password).subscribe({
             next: () => {
+                if (!this.authService.isUserActived()) {
+                    const payload = this.authService.getDecodedToken();
+                    if (payload?.username) { sessionStorage.setItem('account_to_verify', payload.username); }
+                    localStorage.removeItem('token');
+                    this.router.navigate(['/verifier-mon-compte']);
+                    return;
+                }
                 this.router.navigate(['/']);
             },
             error: () => {

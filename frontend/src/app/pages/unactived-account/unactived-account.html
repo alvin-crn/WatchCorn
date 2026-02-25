@@ -1,0 +1,28 @@
+<div class="unactived-container">
+    <div class="card">
+        <h2>Compte non activé</h2>
+
+        <p class="description">
+            Vous n'avez pas encore activé votre compte.
+            Vérifiez votre boîte mail et cliquez sur le lien de confirmation.
+        </p>
+
+        <p class="message success" *ngIf="message && !loading">
+            {{ message }}
+        </p>
+
+        <p class="message error" *ngIf="error && !loading">
+            {{ error }}
+        </p>
+
+        <div class="btn-container">
+            <button class="resend-btn secondary" (click)="resendVerification()" [disabled]="loading">
+                {{ loading ? 'Envoi en cours...' : 'Renvoyer le lien de confirmation' }}
+            </button>
+
+            <button class="back-btn primary" routerLink="/connexion">
+                Retour à la connexion
+            </button>
+        </div>
+    </div>
+</div>

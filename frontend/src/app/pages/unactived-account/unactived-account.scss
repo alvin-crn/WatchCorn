@@ -1,0 +1,68 @@
+@use '_variables.scss' as vars;
+
+.unactived-container {
+    height: vars.$display-screen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 20px;
+
+    .card {
+        background-color: vars.$secondary-background;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+
+            button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.2s;
+
+                &.primary {
+                    background-color: vars.$primary-color;
+                    color: vars.$text-color;
+                }
+
+                &.primary:hover {
+                    background-color: vars.$primary-color-hover;
+                }
+
+                &.secondary {
+                    background-color: vars.$secondary-color;
+                    color: black;
+                }
+
+                &.secondary:hover {
+                    background-color: vars.$secondary-color-hover;
+                }
+            }
+        }
+
+        .message {
+            &.error {
+                color: vars.$error-color;
+            }
+
+            &.success {
+                color: vars.$success-color;
+            }
+        }
+    }
+}

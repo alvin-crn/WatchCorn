@@ -27,3 +27,13 @@ services:
         arguments:
             $tmdbApiKey: '%tmdb.api_key%'
             $tmdbBearerToken: '%tmdb.bearer_token%'
+    
+    App\EventListener\JWTCreatedListener:
+        arguments: ['@request_stack']
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+    App\EventListener\JWTDecodedListener:
+        arguments: ['@request_stack']
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_decoded, method: onJWTDecoded }
