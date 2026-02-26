@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api', name: 'api_')]
+#[Route('/', name: 'api_')]
 final class UserController extends AbstractController
 {
-    #[Route('/register', name: 'register', methods: ['POST'])]
+    #[Route('register', name: 'register', methods: ['POST'])]
     public function register(
         Request $request,
         EmailVerificationService $emailVerificationService,
@@ -58,7 +58,7 @@ final class UserController extends AbstractController
         return new JsonResponse(['message' => 'User created successfully'], 201);
     }
 
-    #[Route('/me', name: 'me', methods: ['GET'])]
+    #[Route('me', name: 'me', methods: ['GET'])]
     public function me(): JsonResponse
     {
         $user = $this->getUser();
@@ -78,7 +78,7 @@ final class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/user/{username}', name: 'user_profile', methods: ['GET'])]
+    #[Route('user/{username}', name: 'user_profile', methods: ['GET'])]
     public function getUserProfile(string $username, EntityManagerInterface $em, UserService $userService): JsonResponse
     {
         $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
@@ -90,7 +90,7 @@ final class UserController extends AbstractController
         return new JsonResponse($userService->presentPublic($user));
     }
 
-    #[Route('/verify-email', name: 'verify_email', methods: ['GET'])]
+    #[Route('verify-email', name: 'verify_email', methods: ['GET'])]
     public function verifyEmail(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $tokenValue = $request->query->get('token');
@@ -118,7 +118,7 @@ final class UserController extends AbstractController
         return new JsonResponse(['message' => 'Compte activé.']);
     }
 
-    #[Route('/send-email-verification', name: 'send_email_verification', methods: ['POST'])]
+    #[Route('send-email-verification', name: 'send_email_verification', methods: ['POST'])]
     public function sendEmailVerification(Request $request, EntityManagerInterface $em, EmailVerificationService $emailVerificationService, MailService $mailService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

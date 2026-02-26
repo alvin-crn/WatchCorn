@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/api/movies')]
+#[Route('/movies')]
 final class WatchedMovieController extends AbstractController
 {
     #[Route('/add', name: 'add_watched_movie', methods: ['POST'])]

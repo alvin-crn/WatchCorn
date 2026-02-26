@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/tmdb')]
+#[Route('/tmdb')]
 final class TmdbController extends AbstractController
 {
     #[Route('/search', methods: ['GET'])]

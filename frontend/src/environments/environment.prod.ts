@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://watchcorn.alvincrn.fr/api'
+  apiUrl: 'https://api-watchcorn.alvincrn.fr'
 };

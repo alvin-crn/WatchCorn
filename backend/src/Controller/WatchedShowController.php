@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/api/shows')]
+#[Route('/shows')]
 final class WatchedShowController extends AbstractController
 {
     #[Route('/add', name: 'add_watched_show', methods: ['POST'])]

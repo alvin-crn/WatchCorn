@@ -1,0 +1,48 @@
+@use '_variables.scss' as vars;
+
+.home-container {
+    display: flex;
+    height: vars.$display-screen;
+    padding: 2rem;
+    background-color: vars.$background-color;
+    color: vars.$text-color;
+
+    .home-card {
+        display: flex;
+        flex-direction: column;
+        background-color: vars.$secondary-background;
+        border-radius: 15px;
+        padding: 1.5rem;
+        width: fit-content;
+        height: 100%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: #2b2b2b;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            color: vars.$primary-color;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        ul {
+            margin: 1rem;
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
+
+        .loader-movie {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
