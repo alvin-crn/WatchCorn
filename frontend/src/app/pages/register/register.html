@@ -44,8 +44,9 @@
         </div>
       </div>
 
-      <button type="submit" class="btn-register" [disabled]="registerForm.invalid">
-        S'inscrire
+      <button type="submit" class="btn-register" [disabled]="registerForm.invalid || isLoading">
+        <app-loader-1 *ngIf="isLoading"></app-loader-1>
+        <span *ngIf="!isLoading">S'inscrire</span>
       </button>
     </form>
 

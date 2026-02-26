@@ -20,6 +20,12 @@
       font-weight: 600;
     }
 
+    .error {
+      margin-bottom: 20px;
+      color: vars.$error-color;
+      font-size: 14px;
+    }
+
     .form-group {
       margin-bottom: 20px;
 

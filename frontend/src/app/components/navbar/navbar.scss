@@ -37,6 +37,7 @@
       font-weight: normal;
       transition: color 0.2s ease;
       white-space: nowrap;
+      cursor: pointer;
 
       &:hover {
         color: vars.$secondary-color;

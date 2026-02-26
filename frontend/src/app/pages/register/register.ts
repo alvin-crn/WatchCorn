@@ -6,11 +6,18 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Loader1 } from '../../shared/loader-1/loader-1';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    Loader1
+  ],
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
@@ -19,6 +26,7 @@ export class Register {
 
   registerForm: FormGroup;
   errorMessage = '';
+  isLoading = false;
 
   constructor(
     private http: HttpClient,
@@ -54,6 +62,8 @@ export class Register {
     }
 
     this.errorMessage = '';
+    this.isLoading = true;
+    this.cdr.detectChanges();
 
     this.http.post(`${environment.apiUrl}/register`, {
       username: this.registerForm.get('username')?.value,
@@ -65,6 +75,7 @@ export class Register {
       },
       error: (err) => {
         this.errorMessage = err.error.message || "Une erreur est survenue";
+        this.isLoading = false;
         this.cdr.detectChanges();
       }
     });

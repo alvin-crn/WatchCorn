@@ -15,8 +15,9 @@
         <input type="password" name="password" [(ngModel)]="password" required placeholder="Mot de passe">
       </div>
 
-      <button type="submit" class="btn-login">
-        Se connecter
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        <app-loader-1 *ngIf="isLoading"></app-loader-1>
+        <span *ngIf="!isLoading">Se connecter</span>
       </button>
     </form>
 
