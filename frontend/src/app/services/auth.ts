@@ -25,40 +25,13 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  // état connecté ou non
-  private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
-  public isLoggedIn$ = this.loggedIn.asObservable();
+  // État connecté ou non
+  private authenticated = new BehaviorSubject<boolean>(this.hasToken());
+  public isAuthenticated$ = this.authenticated.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  // Decode JWT
-  getDecodedToken(): JwtPayload | null {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-
-    try {
-      return jwtDecode<JwtPayload>(token);
-    } catch {
-      return null;
-    }
-  }
-
-  // Vérifier si le token est expiré
-  isTokenExpired(): boolean {
-    const payload = this.getDecodedToken();
-    if (!payload) return true;
-
-    const now = Math.floor(Date.now() / 1000);
-    return payload.exp < now;
-  }
-
-  // Vérifier si l'utilisateur a activé son compte
-  isUserActived(): boolean {
-    const payload = this.getDecodedToken();
-    return payload?.isActived ?? false;
-  }
-
-  // LOGIN
+  // Fonction LOGIN
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login_check`, {
       username,
@@ -68,28 +41,20 @@ export class AuthService {
         localStorage.setItem('token', response.token);
         const payload = this.getDecodedToken();
         if (payload && !payload.isActived) {
-          this.loggedIn.next(false);
+          this.authenticated.next(false);
           this.currentUserSubject.next(null);
           return;
         }
-        this.loggedIn.next(true);
-        this.loadUser();
+        this.authenticated.next(true);
+        this.getUserInfo();
       })
     );
   }
 
-  // User info (lite)
-  loadUser() {
-    return this.http.get(`${this.baseUrl}/me`).subscribe({
-      next: (user) => this.currentUserSubject.next(user),
-      error: () => this.currentUserSubject.next(null),
-    });
-  }
-
-  // LOGOUT
+  // Fonction LOGOUT
   logout(): void {
     localStorage.removeItem('token');
-    this.loggedIn.next(false);
+    this.authenticated.next(false);
     this.currentUserSubject.next(null);
   }
 
@@ -101,8 +66,45 @@ export class AuthService {
     return !this.isTokenExpired();
   }
 
-  // PUBLIC GETTER
-  isLoggedIn(): boolean {
-    return this.loggedIn.value;
+  // === PUBLIC GETTER ===
+
+  // Decoder le token JWT
+  getDecodedToken(): JwtPayload | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+
+    try {
+      return jwtDecode<JwtPayload>(token);
+    } catch {
+      return null;
+    }
+  }
+
+  // Vérifier si l'utilisateur est connecté
+  isAuthenticated(): boolean {
+    return this.authenticated.value;
+  }
+
+  // Vérifier si l'utilisateur a activé son compte
+  isUserActived(): boolean {
+    const payload = this.getDecodedToken();
+    return payload?.isActived ?? false;
+  }
+
+  // Vérifier si le token est expiré
+  isTokenExpired(): boolean {
+    const payload = this.getDecodedToken();
+    if (!payload) return true;
+
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp < now;
+  }
+
+  // Get les infos de base de l'utilisateur courant
+  getUserInfo() {
+    return this.http.get(`${this.baseUrl}/me`).subscribe({
+      next: (user) => this.currentUserSubject.next(user),
+      error: () => this.currentUserSubject.next(null),
+    });
   }
 }

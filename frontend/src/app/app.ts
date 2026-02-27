@@ -13,6 +13,8 @@ export class App {
   protected readonly title = signal('watchcorn');
 
   constructor(public authService: AuthService) {
-    this.authService.loadUser();
+    if (this.authService.isAuthenticated()) {
+      this.authService.getUserInfo();
+    }
   }
 }

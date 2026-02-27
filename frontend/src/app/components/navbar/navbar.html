@@ -12,8 +12,8 @@
         <a routerLink="/">Films</a>
         <a routerLink="/">Séries</a>
         <!-- Si pas connecté -->
-        <a *ngIf="!(authService.isLoggedIn$ | async)" routerLink="/connexion">Connexion</a>
-        <a *ngIf="!(authService.isLoggedIn$ | async)" routerLink="/inscription">Inscription</a>
+        <a *ngIf="!(authService.isAuthenticated$ | async)" routerLink="/connexion">Connexion</a>
+        <a *ngIf="!(authService.isAuthenticated$ | async)" routerLink="/inscription">Inscription</a>
         <!-- Si connecté -->
         <div *ngIf="authService.currentUser$ | async as user" class="user-info">
             <a routerLink="/">
@@ -21,6 +21,6 @@
                 <span>{{ user.displayName }}</span>
             </a>
         </div>
-        <a *ngIf="authService.isLoggedIn$ | async" (click)="logout()">Deconnexion</a>
+        <a *ngIf="authService.isAuthenticated$ | async" (click)="logout()">Deconnexion</a>
     </div>
 </nav>
