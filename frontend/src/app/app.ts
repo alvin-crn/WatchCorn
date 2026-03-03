@@ -14,7 +14,7 @@ export class App {
 
   constructor(public authService: AuthService) {
     if (this.authService.isAuthenticated()) {
-      this.authService.getUserInfo();
+      this.authService.refreshCurrentUser().subscribe({ error: () => { } });
     }
   }
 }

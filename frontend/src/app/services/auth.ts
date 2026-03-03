@@ -33,20 +33,21 @@ export class AuthService {
 
   // Fonction LOGIN
   login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/login_check`, {
-      username,
-      password
-    }).pipe(
+    return this.http.post<any>(`${this.baseUrl}/login_check`, { username, password }).pipe(
       tap(response => {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
+
+        // Vérifier si le compte est activé
         const payload = this.getDecodedToken();
+        // Si le compte n'est pas activé, ne pas authentifier l'utilisateur
         if (payload && !payload.isActived) {
           this.authenticated.next(false);
           this.currentUserSubject.next(null);
           return;
         }
-        this.authenticated.next(true);
-        this.getUserInfo();
+        
+        this.authenticated.next(true); // Mettre à jour l'état d'authentification
+        this.refreshCurrentUser().subscribe(); // Rafraîchir les données de l'utilisateur courant après le login
       })
     );
   }
@@ -100,11 +101,10 @@ export class AuthService {
     return payload.exp < now;
   }
 
-  // Get les infos de base de l'utilisateur courant
-  getUserInfo() {
-    return this.http.get(`${this.baseUrl}/me`).subscribe({
-      next: (user) => this.currentUserSubject.next(user),
-      error: () => this.currentUserSubject.next(null),
-    });
+  // Rafraîchir les données de l'utilisateur courant
+  refreshCurrentUser(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/me`).pipe(
+      tap(user => this.currentUserSubject.next(user))
+    );
   }
 }
