@@ -6,6 +6,7 @@ use App\Entity\EmailVerification;
 use App\Entity\User;
 use App\Service\EmailVerificationService;
 use App\Service\MailService;
+use App\Service\TmdbService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,10 +85,10 @@ final class UserController extends AbstractController
         $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
 
         if (!$user) {
-            return new JsonResponse(['message' => 'User not found'], 404);
+            return new JsonResponse(['message' => 'Utilisateur introuvable'], 404);
         }
 
-        return new JsonResponse($userService->presentPublic($user));
+        return new JsonResponse($userService->publicProfile($user));
     }
 
     #[Route('verify-email', name: 'verify_email', methods: ['GET'])]

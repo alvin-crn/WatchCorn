@@ -33,6 +33,7 @@ security:
             stateless: true
             provider: app_user_provider
             jwt: ~
+            lazy: true
 
     access_control:
         # Auth & inscription → accès public

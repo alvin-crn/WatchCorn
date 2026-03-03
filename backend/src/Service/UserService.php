@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Service\TmdbService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -10,7 +11,8 @@ class UserService
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private TmdbService $tmdbService
     ) {}
 
     public function createUser(string $username, string $email, string $plainPassword): User
@@ -90,44 +92,58 @@ class UserService
     }
 
     public function presentMe(User $user): array
+    public function fullProfile(User $user): array
     {
+        // Récupérer les détails des séries regardées
         $watchedShows = [];
         foreach ($user->getWatchedShows() as $show) {
+            // Récupérer les détails de chaque épisode regardé pour cette série
             $episodes = [];
             foreach ($show->getWatchedEpisodes() as $episode) {
                 $episodes[] = [
                     'id' => $episode->getId(),
                     'episodeId' => $episode->getEpisodeId(),
                     'watchedAt' => $episode->getWatchedAt(),
+                    'watchedAt' => $episode->getWatchedAt()->format('c'),
                     'watchCount' => $episode->getWatchCount(),
                 ];
             }
 
+            // Ajouter les détails de la série et de ses épisodes à la liste des séries regardées
+            $tmdbShowData = $this->tmdbService->getTvShowById($show->getShowId());
             $watchedShows[] = [
                 'id' => $show->getId(),
                 'showId' => $show->getShowId(),
-                'addedAt' => $show->getAddedAt(),
+                'addedAt' => $show->getAddedAt()->format('c'),
                 'episodes' => $episodes,
+                'tmdbPoster' => $tmdbShowData['poster_path'] ?? null, // Ajouter le poster de la série depuis TMDb
+                'tmdbName' => $tmdbShowData['name'] ?? null, // Ajouter le nom de la série depuis TMDb
             ];
         }
 
+        // Récupérer les détails des films regardés
         $watchedMovies = [];
         foreach ($user->getWatchedMovies() as $movie) {
+            $tmdbMovieData = $this->tmdbService->getMovieById($movie->getMovieId());
             $watchedMovies[] = [
                 'id' => $movie->getId(),
                 'movieId' => $movie->getMovieId(),
-                'addedAt' => $movie->getAddedAt(),
-                'watchedAt' => $movie->getWatchedAt(),
+                'addedAt' => $movie->getAddedAt()->format('c'),
+                'watchedAt' => $movie->getWatchedAt()->format('c'),
                 'watchCount' => $movie->getWatchCount(),
+                'tmdbPoster' => $tmdbMovieData['poster_path'] ?? null, // Ajouter le poster du film depuis TMDb
+                'tmdbName' => $tmdbMovieData['title'] ?? null, // Ajouter le titre du film depuis TMDb
             ];
         }
 
+        // Construire le profil complet de l'utilisateur avec les détails des séries et films regardés
         return [
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'username' => $user->getUsername(),
+            'displayName' => $user->getDisplayName(),
             'roles' => $user->getRoles(),
-            'createdAt' => $user->getCreatedAt(),
+            'createdAt' => $user->getCreatedAt()->format('c'),
             'restricted' => $user->isRestricted(),
             'profilePic' => $user->getProfilePic(),
             'watchedMovies' => $watchedMovies,
@@ -135,18 +151,28 @@ class UserService
         ];
     }
 
-    public function presentPublic(User $user): array
+    public function publicProfile(User $user): array
     {
         return [
             'username' => $user->getUsername(),
+            'displayName' => $user->getDisplayName(),
             'profilePic' => $user->getProfilePic(),
-            'createdAt' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
+            'createdAt' => $user->getCreatedAt()->format('c'),
             'watchedShows' => array_map(
-                fn($show) => ['showId' => $show->getShowId()],
+                fn($show) => [
+                    'showId' => $show->getShowId(),
+                    'tmdbPoster' => $this->tmdbService->getTvShowById($show->getShowId())['poster_path'] ?? null,
+                    'tmdbName' => $this->tmdbService->getTvShowById($show->getShowId())['name'] ?? null,
+                ],
                 $user->getWatchedShows()->toArray()
             ),
+
             'watchedMovies' => array_map(
-                fn($movie) => ['movieId' => $movie->getMovieId()],
+                fn($movie) => [
+                    'movieId' => $movie->getMovieId(),
+                    'tmdbPoster' => $this->tmdbService->getMovieById($movie->getMovieId())['poster_path'] ?? null,
+                    'tmdbName' => $this->tmdbService->getMovieById($movie->getMovieId())['title'] ?? null,
+                ],
                 $user->getWatchedMovies()->toArray()
             ),
         ];

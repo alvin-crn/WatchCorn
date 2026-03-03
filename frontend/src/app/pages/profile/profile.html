@@ -1,0 +1,76 @@
+<div *ngIf="isLoading" class="profile-skeleton">
+
+    <div class="header">
+        <div class="avatar skeleton"></div>
+
+        <div class="user-info">
+            <div class="line large skeleton"></div>
+            <div class="line medium skeleton"></div>
+            <div class="line small skeleton"></div>
+
+            <div class="stats">
+                <div class="stat skeleton"></div>
+                <div class="stat skeleton"></div>
+            </div>
+
+            <div class="button skeleton"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title skeleton"></div>
+        <div class="cards">
+            <div class="card skeleton" *ngFor="let i of [1,2,3,4,5]"></div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="!isLoading && profileData" class="profile-container">
+    <!-- Header profil -->
+    <div class="profile-header">
+        <img class="profile-pic" [src]="'img/' + profileData?.profilePic" alt="Photo de profil">
+
+        <div class="profile-info">
+            <h2>{{ profileData?.displayName || profileUsername }}</h2>
+            <p class="username">@{{ profileData?.username }}</p>
+            <p class="member-since">Membre depuis : {{ profileData?.createdAt | date:'longDate' }}</p>
+
+            <div class="stats">
+                <span><strong>0</strong> abonnés</span>
+                <span><strong>0</strong> abonnements</span>
+            </div>
+
+            <button class="btn primary" *ngIf="isOwnProfile">Modifier mon profil</button>
+            <button class="btn secondary" *ngIf="!isOwnProfile">Suivre</button>
+        </div>
+    </div>
+
+    <!-- Section Séries vues -->
+    <div class="section">
+        <h3>Séries vues ({{ profileData?.watchedShows?.length || 0 }})</h3>
+        <div class="card-grid">
+            <div class="card" *ngFor="let show of profileData?.watchedShows">
+                <img [src]="'https://image.tmdb.org/t/p/w185' + show.tmdbPoster" alt="Poster série">
+                <p class="card-title">{{ show.tmdbName || 'Série' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Films vus -->
+    <div class="section">
+        <h3>Films vus ({{ profileData?.watchedMovies?.length || 0 }})</h3>
+        <div class="card-grid">
+            <div class="card" *ngFor="let movie of profileData?.watchedMovies">
+                <img [src]="'https://image.tmdb.org/t/p/w185' + movie.tmdbPoster" alt="Poster film">
+                <p class="card-title">{{ movie.tmdbName || 'Film' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && error" class="error-message">
+    <span>
+        <p>{{ error }}</p>
+    </span>
+</div>
