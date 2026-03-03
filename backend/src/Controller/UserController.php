@@ -6,7 +6,6 @@ use App\Entity\EmailVerification;
 use App\Entity\User;
 use App\Service\EmailVerificationService;
 use App\Service\MailService;
-use App\Service\TmdbService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -89,6 +88,32 @@ final class UserController extends AbstractController
         }
 
         return new JsonResponse($userService->publicProfile($user));
+    }
+
+    #[Route('/user/{username}', name: 'user_update', methods: ['PUT'])]
+    public function updateProfile(string $username, Request $request, UserService $userService): JsonResponse
+    {
+        $currentUser = $this->getUser();
+
+        // Sécurité : seul le propriétaire peut modifier son profil
+        if (!$currentUser || $currentUser->getUsername() !== $username) {
+            return new JsonResponse(['message' => 'Accès interdit'], 403);
+        }
+
+        // Récupération des données envoyées
+        $data = json_decode($request->getContent(), true);
+
+        // Validation simple
+        $displayName = $data['displayName'] ?? null;
+        $displayNameError = $userService->displayNameValidator($displayName);
+        if ($displayNameError) {
+            return new JsonResponse(['message' => $displayNameError], 400);
+        }
+
+        // Appel au service pour mettre à jour le user
+        $userService->updateUser($currentUser, $data);
+
+        return new JsonResponse(['message' => 'Profil mis à jour avec succès']);
     }
 
     #[Route('verify-email', name: 'verify_email', methods: ['GET'])]

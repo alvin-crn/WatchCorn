@@ -30,6 +30,18 @@ class UserService
         return $user;
     }
 
+    public function updateUser(User $user, array $data): User
+    {
+        if (isset($data['displayName'])) {
+            $user->setDisplayName($data['displayName']);
+        }
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
+
     public function usernameExists(string $username): bool
     {
         return (bool) $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
@@ -70,6 +82,14 @@ class UserService
         }
         if ($this->emailExists($email)) {
             return 'Email déjà utilisé.';
+        }
+        return null;
+    }
+
+    public function displayNameValidator(?string $displayName): ?string
+    {
+        if (!$displayName || trim($displayName) === '' || strlen($displayName) > 30) {
+            return 'Nom d’affichage requis et maximum 30 caractères.';
         }
         return null;
     }

@@ -1,0 +1,78 @@
+@use '_variables.scss' as vars;
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+
+    .modal {
+        background: vars.$secondary-background;
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-weight: normal;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+
+        input {
+            width: 100%;
+            padding: 6px 10px;
+            margin-top: 4px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+
+            &.primary {
+                background: vars.$primary-color;
+                color: vars.$text-color;
+            }
+
+            &.secondary {
+                background: vars.$secondary-color;
+                color: #333;
+            }
+        }
+
+        .error,
+        .error-msg {
+            color: vars.$error-color;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+    }
+}

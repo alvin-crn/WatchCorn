@@ -1,0 +1,24 @@
+<div class="overlay" *ngIf="show">
+    <div class="modal">
+        <h2>Modifier mon profil</h2>
+
+        <form [formGroup]="editProfileForm" (ngSubmit)="saveProfile()">
+            <label>Nom d'affichage</label>
+            <input formControlName="displayName" type="text">
+            <div *ngIf="editProfileForm.get('displayName')?.invalid && editProfileForm.get('displayName')?.touched"
+                class="error">
+                Nom d'affichage requis (max 30 caractères)
+            </div>
+
+            <div class="buttons">
+                <button type="button" class="btn secondary" (click)="close()">Annuler</button>
+                <button type="submit" class="btn primary" [disabled]="loading">
+                    <app-loader-1 *ngIf="loading"></app-loader-1>
+                    <span *ngIf="!loading">Modifier</span>
+                </button>
+            </div>
+
+            <div *ngIf="error" class="error-msg">{{ error }}</div>
+        </form>
+    </div>
+</div>

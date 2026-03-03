@@ -41,7 +41,11 @@
                 <span><strong>0</strong> abonnements</span>
             </div>
 
-            <button class="btn primary" *ngIf="isOwnProfile">Modifier mon profil</button>
+            <!-- Bouton modifier profil -->
+            <button class="btn primary" *ngIf="isOwnProfile" (click)="showEditForm = true">Modifier mon profil</button>
+            <!-- EditProfileComponent modal -->
+            <app-edit-profile [(show)]="showEditForm"></app-edit-profile>
+
             <button class="btn secondary" *ngIf="!isOwnProfile">Suivre</button>
         </div>
     </div>

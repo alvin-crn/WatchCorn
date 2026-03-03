@@ -4,11 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { EditProfile } from './edit-profile/edit-profile';
 
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, EditProfile],
     templateUrl: './profile.html',
     styleUrls: ['./profile.scss', './loader-profile.scss'],
 })
@@ -19,6 +20,7 @@ export class Profile {
     profileData: any;
     isLoading: boolean = true;
     error: string | null = null;
+    showEditForm: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
