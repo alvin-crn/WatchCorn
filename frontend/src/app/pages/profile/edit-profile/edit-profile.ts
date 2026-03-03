@@ -30,7 +30,7 @@ export class EditProfile {
   ) {
     this.authService.currentUser$.pipe(take(1)).subscribe(currentUser => {
       this.editProfileForm = this.fb.group({
-        displayName: [currentUser?.displayName || '', [Validators.required, Validators.maxLength(30)]],
+        displayName: [currentUser?.displayName || '', [Validators.required, Validators.maxLength(30), Validators.pattern(/\S/)]],
         // photoProfile: ajout futur (upload)
       });
     });
