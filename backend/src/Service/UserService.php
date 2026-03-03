@@ -91,7 +91,6 @@ class UserService
         return null;
     }
 
-    public function presentMe(User $user): array
     public function fullProfile(User $user): array
     {
         // Récupérer les détails des séries regardées
@@ -103,7 +102,6 @@ class UserService
                 $episodes[] = [
                     'id' => $episode->getId(),
                     'episodeId' => $episode->getEpisodeId(),
-                    'watchedAt' => $episode->getWatchedAt(),
                     'watchedAt' => $episode->getWatchedAt()->format('c'),
                     'watchCount' => $episode->getWatchCount(),
                 ];
