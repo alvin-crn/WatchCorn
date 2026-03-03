@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
 import { Loader1 } from '../../shared/loader-1/loader-1';
 
 @Component({
