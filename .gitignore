@@ -52,3 +52,4 @@ frontend/__screenshots__/
 # System files
 Thumbs.db
 .DS_Store
+/backend/public/uploads/profiles
