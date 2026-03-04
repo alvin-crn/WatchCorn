@@ -29,7 +29,7 @@
 <div *ngIf="!isLoading && profileData" class="profile-container">
     <!-- Header profil -->
     <div class="profile-header">
-        <img class="profile-pic" [src]="'img/' + profileData?.profilePic" alt="Photo de profil">
+        <img class="profile-pic" [src]="mediaUrl + profileData?.profilePic" alt="Photo de profil">
 
         <div class="profile-info">
             <h2>{{ profileData?.displayName || profileUsername }}</h2>

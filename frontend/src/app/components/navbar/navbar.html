@@ -17,7 +17,7 @@
         <!-- Si connecté -->
         <div *ngIf="authService.currentUser$ | async as user" class="user-info">
             <a [routerLink]="['/', user.username]">
-                <img [src]="'img/' + user.profilePic" alt="Avatar" class="avatar" />
+                <img [src]="mediaUrl + user.profilePic" alt="Avatar" class="avatar" />
                 <span>{{ user.displayName }}</span>
             </a>
         </div>
