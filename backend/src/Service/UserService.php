@@ -12,8 +12,7 @@ class UserService
     public function __construct(
         private EntityManagerInterface $em,
         private UserPasswordHasherInterface $passwordHasher,
-        private TmdbService $tmdbService,
-        private string $projectDir
+        private TmdbService $tmdbService
     ) {}
 
     public function createUser(string $username, string $email, string $plainPassword): User
@@ -38,7 +37,7 @@ class UserService
         }
 
         if (!empty($data['photo'])) {
-            $uploadsDir = $this->projectDir . '/public/uploads/profiles';
+            $uploadsDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/profiles';
             $filename = uniqid() . '.' . $data['photo']->guessExtension();
             $data['photo']->move($uploadsDir, $filename);
             $user->setProfilePic($filename);
