@@ -14,13 +14,66 @@
 
 
   .modal {
-    background: vars.$secondary-background;
+    background: vars.$background-color;
     padding: 2rem;
     border-radius: 12px;
-    max-width: 400px;
+    max-width: 600px;
     width: 90%;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 
+    .header-preview {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 15px;
+      background-color: vars.$secondary-background;
+      border-radius: 10px;
+
+      .profile-preview {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .profile-pic-preview {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          
+          object-fit: cover;
+          object-position: center;
+
+          background-size: cover;
+          background-position: center;
+          background-color: vars.$background-color;
+        }
+
+        .profile-info {
+          .displayname {
+            font-size: 18px;
+            color: vars.$text-color;
+          }
+
+          .username {
+            font-size: 14px;
+            color: #999;
+          }
+        }
+      }
+
+      button {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        background-color: vars.$secondary-color;
+        color: black;
+
+        &:hover {
+          background-color: vars.$secondary-color-hover;
+        }
+      }
+    }
 
     h2 {
       margin-top: 0;
@@ -36,11 +89,13 @@
 
     input {
       width: 100%;
-      padding: 6px 10px;
-      margin-top: 4px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+      padding: 10px 15px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #232323;
+      background-color: vars.$secondary-background;
+      color: vars.$text-color;
+      font-size: 16px;
       box-sizing: border-box;
     }
 
@@ -60,11 +115,19 @@
       &.primary {
         background: vars.$primary-color;
         color: vars.$text-color;
+
+        &:hover {
+          background: vars.$primary-color-hover;
+        }
       }
 
       &.secondary {
         background: vars.$secondary-color;
         color: #333;
+
+        &:hover {
+          background: vars.$secondary-color-hover;
+        }
       }
     }
 

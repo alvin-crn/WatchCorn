@@ -3,12 +3,28 @@
         <h2>Modifier mon profil</h2>
 
         <form [formGroup]="editProfileForm" (ngSubmit)="saveProfile()">
+            <div class="header-preview">
+                <div class="profile-preview">
+                    <img class="profile-pic-preview" [src]="previewUrl || currentPhotoUrl" alt="Aperçu photo de profil">
+                    <div class="profile-info">
+                        <p class="displayname">{{ editProfileForm.get('displayName')?.value || 'Nom d\'affichage' }}</p>
+                        <p class="username">@{{ username }}</p>
+                    </div>
+                </div>
+                <button type="button" (click)="fileInput.click()">Modifier la photo de profil</button>
+                <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelected($event)">
+            </div>
+            <div *ngIf="errorPhoto" class="error-msg photo">{{ errorPhoto }}</div>
+
             <label>Nom d'affichage</label>
             <input formControlName="displayName" type="text">
             <div *ngIf="editProfileForm.get('displayName')?.invalid && editProfileForm.get('displayName')?.touched"
                 class="error">
                 Nom d'affichage requis (max 30 caractères)
             </div>
+
+            <div *ngIf="error" class="error-msg">{{ error }}</div>
+
 
             <div class="buttons">
                 <button type="button" class="btn secondary" (click)="close()">Annuler</button>
@@ -17,8 +33,6 @@
                     <span *ngIf="!loading">Modifier</span>
                 </button>
             </div>
-
-            <div *ngIf="error" class="error-msg">{{ error }}</div>
         </form>
     </div>
 </div>

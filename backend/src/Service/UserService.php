@@ -12,7 +12,8 @@ class UserService
     public function __construct(
         private EntityManagerInterface $em,
         private UserPasswordHasherInterface $passwordHasher,
-        private TmdbService $tmdbService
+        private TmdbService $tmdbService,
+        private string $projectDir
     ) {}
 
     public function createUser(string $username, string $email, string $plainPassword): User
@@ -30,16 +31,20 @@ class UserService
         return $user;
     }
 
-    public function updateUser(User $user, array $data): User
+    public function updateUser(User $user, array $data): void
     {
-        if (isset($data['displayName'])) {
+        if (array_key_exists('displayName', $data) && $data['displayName'] !== null) {
             $user->setDisplayName($data['displayName']);
         }
 
-        $this->em->persist($user);
-        $this->em->flush();
+        if (!empty($data['photo'])) {
+            $uploadsDir = $this->projectDir . '/public/uploads/profiles';
+            $filename = uniqid() . '.' . $data['photo']->guessExtension();
+            $data['photo']->move($uploadsDir, $filename);
+            $user->setProfilePic($filename);
+        }
 
-        return $user;
+        $this->em->flush();
     }
 
     public function usernameExists(string $username): bool

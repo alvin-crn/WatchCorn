@@ -101,19 +101,33 @@ final class UserController extends AbstractController
         }
 
         // Récupération des données envoyées
-        $data = json_decode($request->getContent(), true);
+        $displayName = $request->request->get('displayName');
+        $photo = $request->files->get('photo');
 
-        // Validation simple
-        $displayName = $data['displayName'] ?? null;
-        $displayNameError = $userService->displayNameValidator($displayName);
-        if ($displayNameError) {
-            return new JsonResponse(['message' => $displayNameError], 400);
+        // Si rien n'est envoyé
+        if (!$displayName && !$photo) {
+            return new JsonResponse(['message' => 'Aucune modification envoyée'], 400);
+        }
+
+        // Si displayName est envoyé → on valide
+        if ($displayName !== null) {
+            $displayNameError = $userService->displayNameValidator($displayName);
+            if ($displayNameError) {
+                return new JsonResponse(['message' => $displayNameError], 400);
+            }
         }
 
         // Appel au service pour mettre à jour le user
-        $userService->updateUser($currentUser, $data);
+        try {
+            $userService->updateUser($currentUser, [
+                'displayName' => $displayName,
+                'photo' => $photo
+            ]);
 
-        return new JsonResponse(['message' => 'Profil mis à jour avec succès']);
+            return new JsonResponse(['message' => 'Profil mis à jour avec succès']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => $e->getMessage()], 500);
+        }
     }
 
     #[Route('verify-email', name: 'verify_email', methods: ['GET'])]

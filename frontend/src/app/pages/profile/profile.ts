@@ -15,12 +15,13 @@ import { EditProfile } from './edit-profile/edit-profile';
 })
 export class Profile {
 
-    isOwnProfile: boolean | undefined;
-    profileUsername: string | null = null;
-    profileData: any;
-    isLoading: boolean = true;
-    error: string | null = null;
-    showEditForm: boolean = false;
+    mediaUrl = environment.mediaUrl; // URL de base pour les médias (photos de profil)
+    isOwnProfile: boolean | undefined; // Indique si le profil affiché est celui de l'utilisateur connecté
+    profileUsername: string | null = null; // Nom d'utilisateur du profil affiché
+    profileData: any; // Données du profil récupérées depuis l'API
+    isLoading: boolean = true; // Indique si les données du profil sont en cours de chargement
+    error: string | null = null; // Message d'erreur en cas de problème lors de la récupération des données du profil
+    showEditForm: boolean = false; // Contrôle l'affichage du formulaire de modification du profil
 
     constructor(
         private route: ActivatedRoute,
