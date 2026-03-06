@@ -45,8 +45,6 @@ export class Profile {
                 },
                 error: (err) => {
                     this.error = err?.error?.message || 'Erreur inconnue';
-                    const token = localStorage.getItem('token');
-                    console.log('Token actuel :', token);
                     this.isLoading = false;
                     this.cdr.markForCheck();
                 }

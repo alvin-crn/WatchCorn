@@ -27,7 +27,6 @@ export class EmailVerification implements OnInit {
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
-    console.log('Token récupéré:', token);
 
     if (!token) {
       this.message = "Ce lien est invalide.";
