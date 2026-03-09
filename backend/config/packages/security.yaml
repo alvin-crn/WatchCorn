@@ -38,6 +38,7 @@ security:
     access_control:
         # Auth & inscription → accès public
         - { path: ^/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/refreshToken, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/verify-email, roles: PUBLIC_ACCESS }
         - { path: ^/send-email-verification, roles: PUBLIC_ACCESS }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, throwError, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 
@@ -36,6 +36,7 @@ export class AuthService {
     return this.http.post<any>(`${this.baseUrl}/login_check`, { username, password }).pipe(
       tap(response => {
         localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
+        localStorage.setItem('refresh_token', response.refresh_token); // Stocker le refresh token dans le localStorage
 
         // Vérifier si le compte est activé
         const payload = this.getDecodedToken();
@@ -45,9 +46,28 @@ export class AuthService {
           this.currentUserSubject.next(null);
           return;
         }
-        
+
         this.authenticated.next(true); // Mettre à jour l'état d'authentification
         this.refreshCurrentUser().subscribe(); // Rafraîchir les données de l'utilisateur courant après le login
+      })
+    );
+  }
+
+  // Fonction REFRESH TOKEN
+  refreshToken(refreshToken: string): Observable<any> {
+    // Si pas de refresh token, logout
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token'));
+    }
+
+    return this.http.post<any>(`${this.baseUrl}/auth/refreshToken`, { refresh_token: refreshToken }, { headers: { 'x-refresh-call': 'true' } }).pipe(
+      catchError(err => {
+        return throwError(() => err);
+      }),
+      tap(response => {
+        if (response.token) { localStorage.setItem('token', response.token); } // Stocker le nouveau token
+        if (response.refresh_token) { localStorage.setItem('refresh_token', response.refresh_token); } // Stocker le nouveau refresh token
       })
     );
   }
