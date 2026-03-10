@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\EmailVerification;
 use App\Entity\User;
 use App\Service\EmailVerificationService;
 use App\Service\MailService;
@@ -16,13 +15,16 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/', name: 'api_')]
 final class UserController extends AbstractController
 {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly UserService $userService,
+        private readonly EmailVerificationService $emailVerificationService,
+        private readonly MailService $mailService
+    ) {}
+
     #[Route('register', name: 'register', methods: ['POST'])]
-    public function register(
-        Request $request,
-        EmailVerificationService $emailVerificationService,
-        MailService $mailService,
-        UserService $userService
-    ): JsonResponse {
+    public function register(Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
         $username = $data['username'] ?? null;
@@ -33,18 +35,18 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'Champs manquants'], 400);
         }
 
-        $usernameError = $userService->usernameValidator($username);
+        $usernameError = $this->userService->usernameValidator($username);
         if ($usernameError) return new JsonResponse(['message' => $usernameError], 400);
 
-        $emailError = $userService->emailValidator($email);
+        $emailError = $this->userService->emailValidator($email);
         if ($emailError) return new JsonResponse(['message' => $emailError], 400);
 
-        $passwordError = $userService->passwordValidator($password);
+        $passwordError = $this->userService->passwordValidator($password);
         if ($passwordError) return new JsonResponse(['message' => $passwordError], 400);
 
-        $user = $userService->createUser($username, $email, $password);
+        $user = $this->userService->createUser($username, $email, $password);
 
-        $token = $emailVerificationService->generateUrlVerification($user);
+        $token = $this->emailVerificationService->generateUrlVerification($user);
 
         // Envoyer un email de confirmation d'inscription
         $content = "
@@ -53,7 +55,7 @@ final class UserController extends AbstractController
         Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/compte-active?token=" . $token . "'>Confirmer mon email</a> </br></br>
         Ce lien expire dans 30 minutes.
         ";
-        $mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
+        $this->mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
 
         return new JsonResponse(['message' => 'User created successfully'], 201);
     }
@@ -79,19 +81,19 @@ final class UserController extends AbstractController
     }
 
     #[Route('user/{username}', name: 'user_profile', methods: ['GET'])]
-    public function getUserProfile(string $username, EntityManagerInterface $em, UserService $userService): JsonResponse
+    public function getUserProfile(string $username): JsonResponse
     {
-        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
 
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur introuvable'], 404);
         }
 
-        return new JsonResponse($userService->publicProfile($user));
+        return new JsonResponse($this->userService->publicProfile($user));
     }
 
     #[Route('/user/{username}', name: 'user_update', methods: ['PUT'])]
-    public function updateProfile(string $username, Request $request, UserService $userService): JsonResponse
+    public function updateProfile(string $username, Request $request): JsonResponse
     {
         $currentUser = $this->getUser();
 
@@ -111,7 +113,7 @@ final class UserController extends AbstractController
 
         // Si displayName est envoyé → on valide
         if ($displayName !== null) {
-            $displayNameError = $userService->displayNameValidator($displayName);
+            $displayNameError = $this->userService->displayNameValidator($displayName);
             if ($displayNameError) {
                 return new JsonResponse(['message' => $displayNameError], 400);
             }
@@ -119,7 +121,7 @@ final class UserController extends AbstractController
 
         // Appel au service pour mettre à jour le user
         try {
-            $userService->updateUser($currentUser, [
+            $this->userService->updateUser($currentUser, [
                 'displayName' => $displayName,
                 'photo' => $photo
             ]);
@@ -128,75 +130,5 @@ final class UserController extends AbstractController
         } catch (\Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
-    }
-
-    #[Route('verify-email', name: 'verify_email', methods: ['GET'])]
-    public function verifyEmail(Request $request, EntityManagerInterface $em): JsonResponse
-    {
-        $tokenValue = $request->query->get('token');
-
-        if (!$tokenValue) {
-            return new JsonResponse(['message' => 'Ce lien est invalide.'], 400);
-        }
-
-        $token = $em->getRepository(EmailVerification::class)->findOneBy(['token' => $tokenValue]);
-
-        if (!$token) {
-            return new JsonResponse(['message' => 'Ce lien est invalide.'], 400);
-        }
-
-        if ($token->getExpiresAt() < new \DateTimeImmutable()) {
-            return new JsonResponse(['message' => 'Ce lien a expiré.'], 400);
-        }
-
-        $user = $token->getUser();
-        $user->setActived(true);
-
-        $em->remove($token);
-        $em->flush();
-
-        return new JsonResponse(['message' => 'Compte activé.']);
-    }
-
-    #[Route('send-email-verification', name: 'send_email_verification', methods: ['POST'])]
-    public function sendEmailVerification(Request $request, EntityManagerInterface $em, EmailVerificationService $emailVerificationService, MailService $mailService): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $username = $data['username'] ?? null;
-
-        if (!$username) {
-            return new JsonResponse(['message' => 'Aucun utilisateur à qui envoyer l\'email de vérification'], 400);
-        }
-
-        $user = $em->getRepository(User::class)->findOneBy(['username' => $username]);
-
-        if (!$user) {
-            return new JsonResponse(['message' => 'Utilisateur inexistant'], 404);
-        }
-
-        if ($user->isActived()) {
-            return new JsonResponse(['message' => 'Ce compte est déjà activé.'], 400);
-        }
-
-        // Supprimer les anciens tokens de vérification pour cet utilisateur
-        $existingTokens = $em->getRepository(EmailVerification::class)->findBy(['User' => $user]);
-        if ($existingTokens) {
-            foreach ($existingTokens as $existingToken) {
-                $em->remove($existingToken);
-            }
-            $em->flush();
-        }
-
-        $token = $emailVerificationService->generateUrlVerification($user);
-
-        $content = "
-        <h1>Je verifie mon email 📧</h1> 
-        Afin d'activer votre compte, veuillez confirmer votre adresse email en cliquant sur le lien suivant : <a href='https://watchcorn.alvincrn.fr/compte-active?token=" . $token . "'>Confirmer mon email</a> </br></br>
-        Ce lien expire dans 30 minutes.
-        ";
-        $mailService->sendEmail($user->getEmail(), "J'active mon compte WatchCorn !", $content);
-
-        return new JsonResponse(['message' => 'Email de vérification envoyé à ' . $user->getEmail()], 201);
     }
 }
