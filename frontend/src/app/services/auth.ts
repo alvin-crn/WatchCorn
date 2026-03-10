@@ -31,6 +31,19 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  // Initialiser l'authentification au démarrage/refresh de l'application
+  initAuth() {
+    const token = localStorage.getItem('token');
+
+    if (!token) return;
+
+    this.refreshCurrentUser().subscribe({
+      error: () => {
+        this.logout();
+      }
+    });
+  }
+
   // Fonction LOGIN
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login_check`, { username, password }).pipe(
@@ -47,7 +60,6 @@ export class AuthService {
           return;
         }
 
-        this.authenticated.next(true); // Mettre à jour l'état d'authentification
         this.refreshCurrentUser().subscribe(); // Rafraîchir les données de l'utilisateur courant après le login
       })
     );
@@ -75,6 +87,7 @@ export class AuthService {
   // Fonction LOGOUT
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('refresh_token');
     this.authenticated.next(false);
     this.currentUserSubject.next(null);
   }
@@ -124,7 +137,10 @@ export class AuthService {
   // Rafraîchir les données de l'utilisateur courant
   refreshCurrentUser(): Observable<any> {
     return this.http.get(`${this.baseUrl}/me`).pipe(
-      tap(user => this.currentUserSubject.next(user))
+      tap(user => {
+        this.currentUserSubject.next(user); // Mettre à jour les données de l'utilisateur courant
+        this.authenticated.next(true); // Mettre à jour l'état d'authentification
+      })
     );
   }
 }

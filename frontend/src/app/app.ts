@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar';
 import { AuthService } from './services/auth';
@@ -9,12 +9,14 @@ import { AuthService } from './services/auth';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('watchcorn');
 
   constructor(public authService: AuthService) {
-    if (this.authService.isAuthenticated()) {
-      this.authService.refreshCurrentUser().subscribe({ error: () => { } });
-    }
+  }
+
+  ngOnInit() {
+    // Initialiser l'authentification au démarrage de l'application
+    this.authService.initAuth();
   }
 }
