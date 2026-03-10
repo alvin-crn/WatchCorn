@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/auth', name: 'auth_')]
+#[Route('/auth', name: 'api_auth_')]
 final class AuthController extends AbstractController
 {
     public function __construct(private AuthService $authService) {}
