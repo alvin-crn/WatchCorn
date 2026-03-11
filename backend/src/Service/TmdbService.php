@@ -44,23 +44,31 @@ class TmdbService
 
     public function getMovieById(int $id): array
     {
-        return $this->cache->get('tmdb_movie_'.$id, function (ItemInterface $item) use ($id) {
-            $item->expiresAfter(60 * 60 * 24 * 7); // 1 week
+        return $this->cache->get('tmdb_movie_' . $id, function (ItemInterface $item) use ($id) {
+            $item->expiresAfter(60 * 60 * 24 * 14); // 2 weeks
 
-            return $this->request("/movie/{$id}", [
+            $data = $this->request("/movie/{$id}", [
                 'language' => 'fr-FR',
             ]);
+
+            $data['poster_path'] = $data['poster_path'] ?? null;
+
+            return $data;
         });
     }
 
     public function getTvShowById(int $id): array
     {
-        return $this->cache->get('tmdb_tv_show_'.$id, function (ItemInterface $item) use ($id) {
-            $item->expiresAfter(60 * 60 * 24 * 7); // 1 week
+        return $this->cache->get('tmdb_tv_show_' . $id, function (ItemInterface $item) use ($id) {
+            $item->expiresAfter(60 * 60 * 24 * 14); // 2 weeks
 
-            return $this->request("/tv/{$id}", [
+            $data = $this->request("/tv/{$id}", [
                 'language' => 'fr-FR',
             ]);
+
+            $data['poster_path'] = $data['poster_path'] ?? null;
+
+            return $data;
         });
     }
 }
