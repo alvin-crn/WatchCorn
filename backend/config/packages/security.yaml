@@ -43,7 +43,10 @@ security:
         - { path: ^/verify-email, roles: PUBLIC_ACCESS }
         - { path: ^/send-email-verification, roles: PUBLIC_ACCESS }
 
-        # Recherche & contenu public
+        # Gestion des abonnements → JWT requis
+        - { path: ^/user/(follow|unfollow)$, roles: IS_AUTHENTICATED_FULLY }
+
+        # Recherche & contenu public → accès public
         - { path: ^/user/[^/]+$, roles: PUBLIC_ACCESS }
         - { path: ^/tmdb, roles: PUBLIC_ACCESS }
 

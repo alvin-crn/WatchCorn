@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Entity\Follow;
 use App\Service\TmdbService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -173,30 +174,51 @@ class UserService
         ];
     }
 
-    public function publicProfile(User $user): array
+    public function publicProfile(User $user, ?User $viewer = null): array
     {
+        $followersCount = $this->em->getRepository(Follow::class)->count(['following' => $user]);
+        $followingCount = $this->em->getRepository(Follow::class)->count(['follower' => $user]);
+
+        $isFollowing = false;
+        if ($viewer && $viewer !== $user) {
+            $isFollowing = (bool) $this->em->getRepository(Follow::class)->findOneBy([
+                'follower' => $viewer,
+                'following' => $user
+            ]);
+        }
+
         return [
             'username' => $user->getUsername(),
             'displayName' => $user->getDisplayName(),
             'profilePic' => $user->getProfilePic(),
             'createdAt' => $user->getCreatedAt()->format('c'),
-            'watchedShows' => array_map(
-                fn($show) => [
-                    'showId' => $show->getShowId(),
-                    'tmdbPoster' => $this->tmdbService->getTvShowById($show->getShowId())['poster_path'] ?? null,
-                    'tmdbName' => $this->tmdbService->getTvShowById($show->getShowId())['name'] ?? null,
-                ],
-                $user->getWatchedShows()->toArray()
-            ),
-
-            'watchedMovies' => array_map(
-                fn($movie) => [
-                    'movieId' => $movie->getMovieId(),
-                    'tmdbPoster' => $this->tmdbService->getMovieById($movie->getMovieId())['poster_path'] ?? null,
-                    'tmdbName' => $this->tmdbService->getMovieById($movie->getMovieId())['title'] ?? null,
-                ],
-                $user->getWatchedMovies()->toArray()
-            ),
+            'followersCount' => $followersCount,
+            'followingCount' => $followingCount,
+            'isFollowing' => $isFollowing,
+            'watchedShows' => (function () use ($user) {
+                $shows = [];
+                foreach ($user->getWatchedShows() as $show) {
+                    $data = $this->tmdbService->getTvShowById($show->getShowId());
+                    $shows[] = [
+                        'showId' => $show->getShowId(),
+                        'tmdbPoster' => $data['poster_path'] ?? null,
+                        'tmdbName' => $data['name'] ?? null,
+                    ];
+                }
+                return $shows;
+            })(),
+            'watchedMovies' => (function () use ($user) {
+                $movies = [];
+                foreach ($user->getWatchedMovies() as $movie) {
+                    $data = $this->tmdbService->getMovieById($movie->getMovieId());
+                    $movies[] = [
+                        'movieId' => $movie->getMovieId(),
+                        'tmdbPoster' => $data['poster_path'] ?? null,
+                        'tmdbName' => $data['title'] ?? null,
+                    ];
+                }
+                return $movies;
+            })(),
         ];
     }
 }

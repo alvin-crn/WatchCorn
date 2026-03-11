@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Follow;
 use App\Entity\User;
 use App\Service\EmailVerificationService;
 use App\Service\MailService;
@@ -89,7 +90,9 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'Utilisateur introuvable'], 404);
         }
 
-        return new JsonResponse($this->userService->publicProfile($user));
+        $profile = $this->userService->publicProfile($user, $this->getUser());
+
+        return new JsonResponse($profile);
     }
 
     #[Route('/user/{username}', name: 'user_update', methods: ['PUT'])]
@@ -130,5 +133,83 @@ final class UserController extends AbstractController
         } catch (\Exception $e) {
             return new JsonResponse(['message' => $e->getMessage()], 500);
         }
+    }
+
+    #[Route('/user/follow/{username}', name: 'user_follow', methods: ['POST'])]
+    public function followUser(string $username): JsonResponse
+    {
+        // Vérifier que l'utilisateur est authentifié
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['message' => 'Authentification requise'], 401);
+        }
+
+        // Vérifier que l'utilisateur à suivre existe
+        $userToFollow = $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
+        if (!$userToFollow) {
+            return new JsonResponse(['message' => 'Utilisateur à suivre introuvable'], 404);
+        }
+
+        // Vérifier que l'utilisateur ne tente pas de se suivre lui-même
+        if ($userToFollow === $currentUser) {
+            return new JsonResponse(['message' => 'Vous ne pouvez pas vous suivre vous-même'], 400);
+        }
+
+        // Vérifier si le follow existe déjà
+        $existingFollow = $this->em->getRepository(Follow::class)->findOneBy([
+            'follower' => $currentUser,
+            'following' => $userToFollow,
+        ]);
+
+        if ($existingFollow) {
+            return new JsonResponse(['message' => 'Vous suivez déjà cet utilisateur'], 400);
+        }
+
+        // Créer le follow
+        $follow = new Follow();
+        $follow->setFollower($currentUser);
+        $follow->setFollowing($userToFollow);
+
+        $this->em->persist($follow);
+        $this->em->flush();
+
+        return new JsonResponse(['message' => 'Utilisateur suivi avec succès']);
+    }
+
+    #[Route('/user/unfollow/{username}', name: 'user_unfollow', methods: ['POST'])]
+    public function unfollowUser(string $username): JsonResponse
+    {
+        // Vérifier que l'utilisateur est authentifié
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['message' => 'Authentification requise'], 401);
+        }
+
+        // Vérifier que l'utilisateur à ne plus suivre existe
+        $userToUnfollow = $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
+        if (!$userToUnfollow) {
+            return new JsonResponse(['message' => 'Utilisateur à ne plus suivre introuvable'], 404);
+        }
+
+        // Vérifier que l'utilisateur ne tente pas de se désabonner de lui-même
+        if ($userToUnfollow === $currentUser) {
+            return new JsonResponse(['message' => 'Vous ne pouvez pas vous désabonner de vous-même'], 400);
+        }
+
+        // Chercher le follow existant
+        $follow = $this->em->getRepository(Follow::class)->findOneBy([
+            'follower' => $currentUser,
+            'following' => $userToUnfollow,
+        ]);
+
+        if (!$follow) {
+            return new JsonResponse(['message' => 'Vous ne suivez pas cet utilisateur'], 400);
+        }
+
+        // Supprimer le follow
+        $this->em->remove($follow);
+        $this->em->flush();
+
+        return new JsonResponse(['message' => 'Utilisateur désabonné avec succès']);
     }
 }
